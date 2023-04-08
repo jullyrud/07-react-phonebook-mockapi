@@ -1,7 +1,16 @@
-import PropTypes from 'prop-types';
+import { setFilter } from '../reduce/filtersSlice'
+import { useDispatch } from "react-redux"
 
 
-export function Filter  ({onFilterChange, filter}) {
+export function Filter({filter}) {
+
+  
+    const dispatch = useDispatch()   
+    
+     function onFilterChange(e) {
+         dispatch(setFilter(e.target.value))
+         
+  }
 
     return (
         <>  
@@ -12,6 +21,3 @@ export function Filter  ({onFilterChange, filter}) {
 
 }
 
-Filter.prototypev = {
-    onFilterChange: PropTypes.func.isRequired,
-}

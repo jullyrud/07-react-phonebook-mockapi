@@ -1,25 +1,43 @@
-import { createSlice } from "@reduxjs/toolkit";
-
-const contInitState = [
-        {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-        {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
-        {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
-        {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},]
+import { createSlice, isAnyOf } from "@reduxjs/toolkit";
+import { fetchContacts, addCont, deleteCont } from "./operations";
 
 const contactSlise = createSlice({
     name: "contacts",
-    initialState: contInitState,
-    reducers: {
-        addContact(state, action) { state.push(action.payload)},
-        
-        deleteContact(state, action) {
-           return state.filter( cont => cont.id !== action.payload)
-        },
-    
-    }
+    initialState:  {
+        contacts: [],
+        isLoading: false,
+        error: null,
+  }, extraReducers: (builder) => {
+    builder
+      .addCase(fetchContacts.fulfilled, (state, action) => {
+        state.contacts = action.payload;
+        state.error = null;
+        state.isLoading = false;
+      })
+      .addCase(addCont.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.contacts.push(action.payload);
+      })
+      .addCase(deleteCont.fulfilled, (state, action) => {
+          state.isLoading = false;
+         state.error = null;
+          const index = state.contacts.findIndex(
+            task => task.id === action.payload.id)
+         state.contacts.splice(index, 1);
+      })
+      .addMatcher(isAnyOf(fetchContacts.pending, addCont.pending, deleteCont.pending), state => {
+        state.isLoading = true;
+      })
+      .addMatcher(isAnyOf(fetchContacts.rejected, addCont.rejected, deleteCont.rejected),(state, action) => {
+       state.isLoading = false;
+       state.error = action.payload;
+      })
+ 
+  }
 })
 
 export const contactsReducer = contactSlise.reducer
-export const { addContact, deleteContact } = contactSlise.actions
+export const { fetchingInProgress, fetchingSuccess, fetchingError } = contactSlise.actions
 
 

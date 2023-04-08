@@ -1,61 +1,47 @@
 import { Form } from './form/Form'
 import { Info } from './info/Info'
 import { Filter } from './filter/Filter'
-import { nanoid } from 'nanoid'
 import { Wrap } from './App.styled'
+import { Error } from './Error/Error'
 import { useSelector, useDispatch } from "react-redux"
-import { addContact, deleteContact } from './reduce/contactsSlice'
-import { setFilter } from './reduce/filtersSlice'
+
+import { selectContacts, selectFilter, visibleContacts } from './reduce/selectors'
+import { useEffect } from 'react';
+import { fetchContacts, deleteCont } from './reduce/operations';
 
 
-
-export function App () {
+export function App() {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts)
-  const filter = useSelector(state => state.filters)
+  const { error } = useSelector(selectContacts)
+  const contacts = useSelector(visibleContacts) 
+  const filter = useSelector(selectFilter)
 
-  function onSubmitHandler (data) {
-   
-    for (let cont of contacts) {
-      if (data.name === cont.name) {
-        return alert (`${data.name} is already in contacts`)
-      } 
-}
+ useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
-    const contact = {
-      id: nanoid(),
-      name: data.name,
-      number: data.number,
-    }
-    dispatch(addContact(contact))
-    console.log(contacts);
+   function deleteContactFunct(id) {
+    dispatch(deleteCont(id))
   }
-  
-  function deleteContactFunct(id) {
-    dispatch(deleteContact(id))
-  }
-  
-  function onFilterChange(e) {
-   dispatch(setFilter(e.target.value))
-  }
-  
-  function filteredContacts() {
-    return contacts.filter(cont =>
-      cont.name.toLowerCase().includes(filter.toLowerCase()))
-    
-  }
+ 
+//   function filteredContacts() {
+//     console.log(filter);
+//     return contacts.filter(cont =>
+//       cont.name.toLowerCase().includes(filter.toLowerCase()))
+//  }
 
 return (
-        <>
-          <Wrap>
-            <h1>Phonebook</h1>
-            <Form inSubmit={onSubmitHandler} />
-            <h2>Contacts</h2>
-      <Filter onFilterChange={onFilterChange} filter={filter} />
-            <Info contacts={filteredContacts()}
-              onDelBtnClick={deleteContactFunct} />
-          </Wrap>
-       </>
+  <>
+    <Wrap>
+      <h1>Phonebook</h1>
+      <Form />
+      <h2>Contacts</h2>
+      <Filter filter={filter} />
+      {error && <Error text='There is something wrong' />}
+      <Info contacts={contacts} 
+        deleteContactFunct={deleteContactFunct} />
+    </Wrap>
+  </>
     ) 
 
 }

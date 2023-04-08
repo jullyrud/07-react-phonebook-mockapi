@@ -1,51 +1,42 @@
-import React, { useState } from "react";
+
 import { AddForm, Input, Label, Button } from './Form.styled'
-import PropTypes from 'prop-types';
 
+import { useDispatch } from "react-redux"
+import { addCont } from '../reduce/operations';
+import { useSelector } from 'react-redux';
+import { selectContacts } from 'components/reduce/selectors';
 
+export function Form() {
+  const {contacts, isLoading } = useSelector(selectContacts)
+  const dispatch = useDispatch()
 
-export function Form({ inSubmit }) {
+    const handleSubmit = event  => {
+      event.preventDefault()
+      const name = event.target.name.value
+      const number = event.target.number.value
 
-  
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+      const data = {
+        name,
+        number
+      }
 
-  function handleChahge(event) {
-    const { name, value } = event.target
-    switch (name) {
-      case "name":
-        setName(value)
-      
-        break;
-      case "number":
-        setNumber(value)
-        break;
-      default:
-        throw new console.error('something went wrong');
-    }
+      for (let cont of contacts) {
+        if (data.name === cont.name) {
+          return alert(`${data.name} is already in contacts`)
+        }
+      }
+      dispatch(addCont(data)) 
+      event.target.reset()
   }
-  
-    function handleSubmit(event) {
-    event.preventDefault()
-    inSubmit({ name, number})
-    reset()
-  }
-    
-  function reset() {
-    setName('')
-    setNumber('')
-  }
-  
+ 
   return (
     <>
-      <AddForm onSubmit={handleSubmit}>
+      <AddForm  onSubmit={handleSubmit}>
         <Label htmlFor="name">Name</Label>
         <Input
           type="text"
-          value={name}
-          onChange={handleChahge}
           name="name"
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+          pattern="^[a-zA-Zа-яА-Я]+(?:[' -][a-zA-Zа-яА-Я]+)*$"
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
           id="name"
@@ -54,15 +45,13 @@ export function Form({ inSubmit }) {
         <Label htmlFor="number">Number</Label>
         <Input
           type="text"
-          value={number}
-          onChange={handleChahge}
           name="number"
-          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+          pattern="^\+?\d[\d\-\(\) ]{8,}\d$"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
           id="number"
         />
-        <Button type="submit"> add contact </Button>
+        <Button disabled={isLoading} type="submit">add contact</Button>
       </AddForm>
     </>
   )
@@ -70,6 +59,3 @@ export function Form({ inSubmit }) {
 } 
 
 
-Form.propTypes = {
-  inSubmit: PropTypes.func.isRequired
-}
