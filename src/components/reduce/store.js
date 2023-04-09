@@ -5,19 +5,24 @@ import { contactsReducer } from './contactsSlice'
 // import { persistStore, persistReducer } from 'redux-persist'
 
 
-//   const persistConfig = {
-//   key: 'root',
-//   storage,
-//   }
+  // const persistConfig = {
+  // key: 'root',
+  // storage,
+  // }
 
-// const persistedReducer = persistReducer(persistConfig, filtersReducer)
-  
 export const store = configureStore({
   reducer: {
     contacts: contactsReducer,
-    filters: filtersReducer,
+    filters:  filtersReducer,
   },
 });
+  
+// export const store = configureStore({
+//   reducer: {
+//     contacts: contactsReducer,
+//     filters: persistReducer(persistConfig, filtersReducer),
+//   },
+// });
 
-// export const persistor = persistStore(store)
+//  export const persistor = persistStore(store)
 

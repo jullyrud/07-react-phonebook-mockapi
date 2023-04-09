@@ -23,12 +23,6 @@ export function App() {
    function deleteContactFunct(id) {
     dispatch(deleteCont(id))
   }
- 
-//   function filteredContacts() {
-//     console.log(filter);
-//     return contacts.filter(cont =>
-//       cont.name.toLowerCase().includes(filter.toLowerCase()))
-//  }
 
 return (
   <>

@@ -13,7 +13,7 @@ const contactSlise = createSlice({
         state.contacts = action.payload;
         state.error = null;
         state.isLoading = false;
-      })
+      }) 
       .addCase(addCont.fulfilled, (state, action) => {
         state.isLoading = false;
         state.error = null;
