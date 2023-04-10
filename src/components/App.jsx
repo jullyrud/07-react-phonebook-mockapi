@@ -5,7 +5,7 @@ import { Wrap } from './App.styled'
 import { Error } from './Error/Error'
 import { useSelector, useDispatch } from "react-redux"
 
-import { selectContacts, selectFilter, visibleContacts } from './reduce/selectors'
+import { selectContacts, visibleContacts } from './reduce/selectors'
 import { useEffect } from 'react';
 import { fetchContacts, deleteCont } from './reduce/operations';
 
@@ -14,7 +14,7 @@ export function App() {
   const dispatch = useDispatch();
   const { error } = useSelector(selectContacts)
   const contacts = useSelector(visibleContacts) 
-  const filter = useSelector(selectFilter)
+  
 
  useEffect(() => {
     dispatch(fetchContacts());
